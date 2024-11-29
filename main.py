@@ -49,21 +49,6 @@ class You:
 
         return decorator
 
-    def on_msg(self, pattern, **kwargs):
-        if isinstance(pattern, str):
-            pattern = [pattern]
-
-        pattern = "|".join(pattern)
-        pattern = re.compile(rf"^[\/!]({pattern})(?:\s|$)", re.IGNORECASE)
-        kwargs['pattern'] = pattern
-
-        def decorator(func):
-            for client in self.clients:
-                client.add_event_handler(func, events.NewMessage(**kwargs))
-            return func
-
-        return decorator
-
 app = You()
 
 async def main():
@@ -79,7 +64,7 @@ async def main():
     await app.start()
 
 @app.on(events.CallbackQuery(pattern=r"home"))
-@app.on_msg(pattern="start")
+@app.on(events.NewMessage(pattern=r"^/start"))
 async def start(event):
     if event.chat_id and (await event.get_chat()).is_private:
         message = """Hello {user} 👋,
