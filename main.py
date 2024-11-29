@@ -1,5 +1,5 @@
 import asyncio
-import re 
+import re
 from telethon import events, Button
 from telethon import TelegramClient
 import logging
@@ -27,9 +27,9 @@ class You:
         self.clients = []
 
     async def start(self):
-    	to_start = []
-    	for token in self.tokens:
-    	    client = TelegramClient(f"bot_{token[:10]}", self.api_id, self.api_hash)
+        to_start = []
+        for token in self.tokens:
+            client = TelegramClient(f"bot_{token[:10]}", self.api_id, self.api_hash)
             self.clients.append(client)
             to_start.append(client.start(bot_token=token))
         await asyncio.gather(*to_start)
@@ -42,14 +42,14 @@ class You:
 
     def on(self, event: events.common.EventBuilder):
         def decorator(f):
-        	for client in self.clients:
+            for client in self.clients:
                 client.add_event_handler(f, event)
             return f
 
         return decorator
-        
+
     def on_msg(self, pattern, **kwargs):
-    	if isinstance(pattern, str):
+        if isinstance(pattern, str):
             pattern = [pattern]
 
         pattern = "|".join(pattern)
@@ -62,29 +62,28 @@ class You:
             return func
 
         return decorator
-        
-app  = You()
-        
+
+app = You()
+
 async def main():
-	if not API_ID:
-        log.info("❌ 'API_ID' - Not Found ‼️")
+    if not API_ID:
+        log.error("❌ Missing 'API_ID' in the configuration! Please set it in the 'config.py' file.")
         sys.exit(1)
     if not API_HASH:
-        log.info("❌ 'API_HASH' - Not Found ‼️")
+        log.error("❌ Missing 'API_HASH' in the configuration! Please set it in the 'config.py' file.")
         sys.exit(1)
-    if not BOT_TOKEN:
-        log.info("❌ 'BOT_TOKEN' - Not Found ‼️")
+    if not TOKENS or not isinstance(TOKENS, list) or len(TOKENS) == 0:
+        log.error("❌ Missing or invalid 'TOKENS'! Please ensure it is a list of bot tokens in the 'config.py' file.")
         sys.exit(1)
     await app.start()
-    
+
 @app.on(events.CallbackQuery(pattern=r"home"))
-@app.on_msg(pattern="start", func=lambda e: e.is_private))
+@app.on_msg(pattern="start", func=lambda e: e.is_private)
 async def start(event):
     message = """Hello {user} 👋,
 I am an {me} 🤖. I can give reactions to posts in your channel! 🎉
 
 To learn how to use me or how to set me up, click the button below for my usage instructions 📜👇.
-
     """
     sender = await event.get_sender()
     me = await event.client.get_me()
@@ -95,21 +94,20 @@ To learn how to use me or how to set me up, click the button below for my usage 
         [Button.inline("how to set me up! 💛", data=b"setup")]
     ]
     if event.data:
-    	await event.edit(message.format(user=mention, me=me_mention), buttons=button)
+        await event.edit(message.format(user=mention, me=me_mention), buttons=button)
     else:
         await event.respond(message.format(user=mention, me=me_mention), buttons=button)
 
 @app.on(events.CallbackQuery(pattern=r"setup"))
 async def setup(event):
-	txt = "Due to telegram restrictions one bot can give one reaction in your post so below are some bots add this in your channel [ make sure promote as admin but without any right if you don't promote it aslo work as well ]\n"
-	for client in app.clients:
-		txt += f"@{(await client.get_me()).username}"
+    txt = "Due to Telegram restrictions, one bot can give one reaction to your post. Below are some bots. Add these to your channel [make sure to promote them as admins but without any rights. If you don't promote them, they will still work]:\n"
+    for client in app.clients:
+        txt += f"@{(await client.get_me()).username}\n"
     button = [
         [Button.inline("Back", data="home")]
     ]
-    await event.edit(txt, buttons= button)
-		
-    
+    await event.edit(txt, buttons=button)
+
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
