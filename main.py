@@ -33,7 +33,8 @@ class You:
             client = TelegramClient(f"bot_{token[:10]}", self.api_id, self.api_hash)
             self.clients.append(client)
             to_start.append(client.start(bot_token=token))
-        await asyncio.gather(*to_start)
+            await client.start(bot_token=token)
+        #await asyncio.gather(*to_start)
         log.info("All bots started successfully.")
 
     async def disconnect(self):
