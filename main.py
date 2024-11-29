@@ -16,7 +16,7 @@ logging.basicConfig(
     ],
 )
 
-logging.getLogger("telethon").setLevel(logging.ERROR)
+# logging.getLogger("telethon").setLevel(logging.ERROR)
 
 log = logging.getLogger("Bot")
 
@@ -79,25 +79,28 @@ async def main():
     await app.start()
 
 @app.on(events.CallbackQuery(pattern=r"home"))
-@app.on_msg(pattern="start", func=lambda e: e.is_private)
+@app.on_msg(pattern="start")
 async def start(event):
-    message = """Hello {user} 👋,
+    if event.chat_id and (await event.get_chat()).is_private:
+        message = """Hello {user} 👋,
 I am an {me} 🤖. I can give reactions to posts in your channel! 🎉
 
 To learn how to use me or how to set me up, click the button below for my usage instructions 📜👇.
-    """
-    sender = await event.get_sender()
-    me = await event.client.get_me()
-    user_name = f"{sender.first_name} {sender.last_name or ''}".strip()
-    me_mention = f"[{me.first_name}](tg://user?id={me.id})"
-    mention = f"[{user_name}](tg://user?id={sender.id})"
-    button = [
-        [Button.inline("how to set me up! 💛", data=b"setup")]
-    ]
-    if event.data:
-        await event.edit(message.format(user=mention, me=me_mention), buttons=button)
-    else:
-        await event.respond(message.format(user=mention, me=me_mention), buttons=button)
+        """
+        sender = await event.get_sender()
+        me = await event.client.get_me()
+        user_name = f"{sender.first_name} {sender.last_name or ''}".strip()
+        me_mention = f"[{me.first_name}](tg://user?id={me.id})"
+        mention = f"[{user_name}](tg://user?id={sender.id})"
+        button = [
+            [Button.inline("How to set me up! 💛", data=b"setup")]
+        ]
+        if event.data:
+            await event.edit(message.format(user=mention, me=me_mention), buttons=button)
+        else:
+            await event.respond(message.format(user=mention, me=me_mention), buttons=button)
+
+
 
 @app.on(events.CallbackQuery(pattern=r"setup"))
 async def setup(event):
@@ -112,7 +115,4 @@ async def setup(event):
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
-    #loop.run_forever()
-    import time
-    while True:
-        time.sleep(300)
+    loop.run_forever()
