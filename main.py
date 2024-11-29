@@ -32,7 +32,7 @@ class You:
         for token in self.tokens:
             client = TelegramClient(f"bot_{token[:10]}", self.api_id, self.api_hash)
             self.clients.append(client)
-            to_start.append(client.start(bot_token=token))
+            #to_start.append(client.start(bot_token=token))
             await client.start(bot_token=token)
         #await asyncio.gather(*to_start)
         log.info("All bots started successfully.")
