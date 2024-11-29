@@ -3,6 +3,7 @@ import re
 from telethon import events, Button
 from telethon import TelegramClient
 import logging
+from logging.handlers import RotatingFileHandler
 from config import API_ID, API_HASH, TOKENS
 
 logging.basicConfig(
@@ -10,7 +11,7 @@ logging.basicConfig(
     format="[%(asctime)s - %(levelname)s] - %(name)s - %(message)s",
     datefmt="%d-%b-%y %H:%M:%S",
     handlers=[
-        logging.handlers.RotatingFileHandler("log.txt", maxBytes=5000000, backupCount=10),
+        RotatingFileHandler("log.txt", maxBytes=5000000, backupCount=10),
         logging.StreamHandler(),
     ],
 )
