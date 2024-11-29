@@ -65,7 +65,7 @@ async def main():
     await app.start()
 
 @app.on(events.CallbackQuery(pattern=r"home"))
-@app.on(events.NewMessage(pattern=r"^/start"))
+@app.clients[0].on(events.NewMessage(pattern=r"^/start"))
 async def start(event):
     if event.chat_id and (await event.get_chat()).is_private:
         message = """Hello {user} 👋,
