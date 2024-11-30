@@ -2,6 +2,7 @@ import asyncio
 import re
 from telethon import events, Button
 from telethon import TelegramClient
+from telethon.tl.types import PeerChannel
 import logging
 from logging.handlers import RotatingFileHandler
 import sys
@@ -85,6 +86,11 @@ async def setup(event):
         txt += f"@{(await client.get_me()).username}\n"
     button = [[Button.inline("Back", data="home")]]
     await event.edit(txt, buttons=button)
+
+@app.on(events.NewMessage(func=lambda e: isinstance(e.from_id, PeerChannel)))
+async def handle_channel_messages(event):
+    pass
+
 
 if __name__ == "__main__":
     if not API_ID or not API_HASH or not TOKENS or not isinstance(TOKENS, list) or len(TOKENS) == 0:
