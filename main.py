@@ -34,8 +34,8 @@ class You:
             await client.start(bot_token=token)
             self.clients.append(client)
             
-        tasks.append(client.run_until_disconnected())
-        await asyncio.gather(*to_start)
+            tasks.append(client.run_until_disconnected())
+        await asyncio.gather(*tasks)
         log.info("All bots started successfully.")
 
     async def disconnect(self):
