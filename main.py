@@ -28,13 +28,14 @@ class You:
         self.clients = []
 
     async def start(self):
-        to_start = []
+        tasks: list = list()
         for token in self.tokens:
             client = TelegramClient(f"bot_{token[:10]}", self.api_id, self.api_hash)
-            #to_start.append(client.start(bot_token=token))
             await client.start(bot_token=token)
             self.clients.append(client)
-        #await asyncio.gather(*to_start)
+            
+        tasks.append(client.run_until_disconnected())
+        await asyncio.gather(*to_start)
         log.info("All bots started successfully.")
 
     async def disconnect(self):
