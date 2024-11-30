@@ -70,10 +70,13 @@ To learn how to use me or how to set me up, click the button below for my usage 
     me_mention = f"[{me.first_name}](tg://user?id={me.id})"
     mention = f"[{user_name}](tg://user?id={sender.id})"
     button = [[Button.inline("How to set me up! 💛", data=b"setup")]]
-    if event.data:
+
+    if isinstance(event, events.CallbackQuery.Event):
         await event.edit(message.format(user=mention, me=me_mention), buttons=button)
-    else:
+    elif isinstance(event, events.NewMessage.Event):
         await event.respond(message.format(user=mention, me=me_mention), buttons=button)
+
+
 
 @app.on(events.CallbackQuery(pattern=r"setup"))
 async def setup(event):
