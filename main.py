@@ -67,7 +67,7 @@ async def main():
 
 @app.on(events.NewMessage())
 async def debug(event):
-    print(event)
+    log.info(event)
 
 @app.on(events.CallbackQuery(pattern=r"home"))
 #@app.on(events.NewMessage(pattern=r"^/start"))
