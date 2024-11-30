@@ -1,11 +1,10 @@
 import asyncio
-import re
+import logging
+import sys
 from telethon import events, Button
 from telethon import TelegramClient
 from telethon.tl.types import PeerChannel
-import logging
 from logging.handlers import RotatingFileHandler
-import sys
 from config import API_ID, API_HASH, TOKENS
 
 logging.basicConfig(
@@ -20,24 +19,21 @@ logging.basicConfig(
 
 log = logging.getLogger("Bot")
 
+
 class You:
     def __init__(self):
         self.api_id = API_ID
         self.api_hash = API_HASH
         self.tokens = TOKENS
-        self.clients = []
-        self.event_handlers = []
+        self.clients = [
+            TelegramClient(f"bot_{token[:10]}", self.api_id, self.api_hash)
+            for token in self.tokens
+        ]
 
     async def start(self):
-        for token in self.tokens:
-            client = TelegramClient(f"bot_{token[:10]}", self.api_id, self.api_hash)
+        for client, token in zip(self.clients, self.tokens):
             await client.start(bot_token=token)
-            self.clients.append(client)
             log.info(f"Bot {(await client.get_me()).username} started successfully.")
-
-        for client in self.clients:
-            for event, handler in self.event_handlers:
-                client.add_event_handler(handler, event)
         log.info("All bots started successfully.")
 
         tasks = [client.run_until_disconnected() for client in self.clients]
@@ -50,9 +46,11 @@ class You:
 
     def on(self, event: events.common.EventBuilder):
         def decorator(f):
-            self.event_handlers.append((event, f))
+            for client in self.clients:
+                client.add_event_handler(f, event)
             return f
         return decorator
+
 
 app = You()
 
@@ -78,18 +76,18 @@ To learn how to use me or how to set me up, click the button below for my usage 
         await event.respond(message.format(user=mention, me=me_mention), buttons=button)
 
 
-
 @app.on(events.CallbackQuery(pattern=r"setup"))
 async def setup(event):
     txt = "Due to Telegram restrictions, one bot can give one reaction to your post. Below are some bots. Add these to your channel [make sure to promote them as admins but without any rights. If you don't promote them, they will still work]:\n"
     for client in app.clients:
         txt += f"@{(await client.get_me()).username}\n"
-    button = [[Button.inline("Back", data="home")]]
+    button = [[Button.inline("Back", data=b"home")]]
     await event.edit(txt, buttons=button)
+
 
 @app.on(events.NewMessage(func=lambda e: isinstance(e.from_id, PeerChannel)))
 async def handle_channel_messages(event):
-    pass
+    log.info(f"Received a message in a channel: {event.message.message}")
 
 
 if __name__ == "__main__":
