@@ -4,6 +4,7 @@ from telethon import events, Button
 from telethon import TelegramClient
 import logging
 from logging.handlers import RotatingFileHandler
+import sys
 from config import API_ID, API_HASH, TOKENS
 
 logging.basicConfig(
@@ -16,8 +17,6 @@ logging.basicConfig(
     ],
 )
 
-# logging.getLogger("telethon").setLevel(logging.ERROR)
-
 log = logging.getLogger("Bot")
 
 class You:
@@ -26,17 +25,22 @@ class You:
         self.api_hash = API_HASH
         self.tokens = TOKENS
         self.clients = []
+        self.event_handlers = []
 
     async def start(self):
-        tasks: list = list()
         for token in self.tokens:
             client = TelegramClient(f"bot_{token[:10]}", self.api_id, self.api_hash)
             await client.start(bot_token=token)
             self.clients.append(client)
-            
-            tasks.append(client.run_until_disconnected())
-        await asyncio.gather(*tasks)
+            log.info(f"Bot {await client.get_me().username} started successfully.")
+
+        for client in self.clients:
+            for event, handler in self.event_handlers:
+                client.add_event_handler(handler, event)
         log.info("All bots started successfully.")
+
+        tasks = [client.run_until_disconnected() for client in self.clients]
+        await asyncio.gather(*tasks)
 
     async def disconnect(self):
         log.info("Stopping all bots...")
@@ -45,32 +49,17 @@ class You:
 
     def on(self, event: events.common.EventBuilder):
         def decorator(f):
-            for client in self.clients:
-                client.add_event_handler(f, event)
+            self.event_handlers.append((event, f))
             return f
-
         return decorator
 
 app = You()
-
-async def main():
-    if not API_ID:
-        log.error("❌ Missing 'API_ID' in the configuration! Please set it in the 'config.py' file.")
-        sys.exit(1)
-    if not API_HASH:
-        log.error("❌ Missing 'API_HASH' in the configuration! Please set it in the 'config.py' file.")
-        sys.exit(1)
-    if not TOKENS or not isinstance(TOKENS, list) or len(TOKENS) == 0:
-        log.error("❌ Missing or invalid 'TOKENS'! Please ensure it is a list of bot tokens in the 'config.py' file.")
-        sys.exit(1)
-    await app.start()
 
 @app.on(events.NewMessage())
 async def debug(event):
     log.info(event)
 
 @app.on(events.CallbackQuery(pattern=r"home"))
-#@app.on(events.NewMessage(pattern=r"^/start"))
 async def start(event):
     if event.chat_id and (await event.get_chat()).is_private:
         message = """Hello {user} 👋,
@@ -83,26 +72,23 @@ To learn how to use me or how to set me up, click the button below for my usage 
         user_name = f"{sender.first_name} {sender.last_name or ''}".strip()
         me_mention = f"[{me.first_name}](tg://user?id={me.id})"
         mention = f"[{user_name}](tg://user?id={sender.id})"
-        button = [
-            [Button.inline("How to set me up! 💛", data=b"setup")]
-        ]
+        button = [[Button.inline("How to set me up! 💛", data=b"setup")]]
         if event.data:
             await event.edit(message.format(user=mention, me=me_mention), buttons=button)
         else:
             await event.respond(message.format(user=mention, me=me_mention), buttons=button)
-
-
 
 @app.on(events.CallbackQuery(pattern=r"setup"))
 async def setup(event):
     txt = "Due to Telegram restrictions, one bot can give one reaction to your post. Below are some bots. Add these to your channel [make sure to promote them as admins but without any rights. If you don't promote them, they will still work]:\n"
     for client in app.clients:
         txt += f"@{(await client.get_me()).username}\n"
-    button = [
-        [Button.inline("Back", data="home")]
-    ]
+    button = [[Button.inline("Back", data="home")]]
     await event.edit(txt, buttons=button)
 
 if __name__ == "__main__":
+    if not API_ID or not API_HASH or not TOKENS or not isinstance(TOKENS, list) or len(TOKENS) == 0:
+        log.error("❌ Invalid configuration! Please ensure 'API_ID', 'API_HASH', and 'TOKENS' are correctly set in 'config.py'.")
+        sys.exit(1)
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    loop.run_until_complete(app.start())
