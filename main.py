@@ -55,10 +55,8 @@ class You:
 
 app = You()
 
-@app.on(events.NewMessage())
-async def debug(event):
-    log.info(event)
 
+@app.on(events.NewMessage(pattern="^/start", func=lambda e: e.is_private))
 @app.on(events.CallbackQuery(pattern=r"home"))
 async def start(event):
     if event.chat_id and (await event.get_chat()).is_private:
