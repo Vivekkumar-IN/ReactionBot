@@ -32,7 +32,7 @@ class You:
             client = TelegramClient(f"bot_{token[:10]}", self.api_id, self.api_hash)
             await client.start(bot_token=token)
             self.clients.append(client)
-            log.info(f"Bot {await client.get_me().username} started successfully.")
+            log.info(f"Bot {(await client.get_me()).username} started successfully.")
 
         for client in self.clients:
             for event, handler in self.event_handlers:
