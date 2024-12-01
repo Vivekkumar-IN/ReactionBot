@@ -54,12 +54,6 @@ async def setup(event):
     button = [[Button.inline("Back", data=b"home")]]
     await event.edit(txt, buttons=button)
 
-
-@app.on(events.NewMessage(func=lambda e: isinstance(e.from_id, PeerChannel)))
-async def handle_channel_messages(event):
-    log.info(f"Received a message in a channel: {event.message.message}")
-
-
 if __name__ == "__main__":
     if not API_ID or not API_HASH or not TOKENS or not isinstance(TOKENS, list) or len(TOKENS) == 0:
         log.error("❌ Invalid configuration! Please ensure 'API_ID', 'API_HASH', and 'TOKENS' are correctly set in 'config.py'.")
