@@ -17,14 +17,14 @@ class You:
     async def start(self):
         for client, token in zip(self.clients, self.tokens):
             await client.start(bot_token=token)
-            log.info(f"Bot {(await client.get_me()).username} started successfully.")
+            print(f"Bot {(await client.get_me()).username} started successfully.")
         print("All bots started successfully.")
 
         tasks = [client.run_until_disconnected() for client in self.clients]
         await asyncio.gather(*tasks)
 
     async def disconnect(self):
-        log.info("Stopping all bots...")
+        print("Stopping all bots...")
         await asyncio.gather(*(client.disconnect() for client in self.clients))
         print("All bots stopped.")
 
