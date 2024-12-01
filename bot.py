@@ -1,10 +1,8 @@
 import importlib
 import asyncio
 from telethon import TelegramClient
+from telethon import events
 from config import API_ID, API_HASH, TOKENS
-
-
-
 
 class You:
     def __init__(self):
