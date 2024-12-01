@@ -13,7 +13,7 @@ async def react(event):
   reaction = [ReactionEmoji(emoticon=choice(reactions))]
   await event.client(SendReactionRequest(
     peer=await event.get_chat(),
-    msg_id = event.message_id,
+    msg_id = event.id,
     reaction=reaction,
   ))
   
