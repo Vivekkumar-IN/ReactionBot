@@ -9,7 +9,7 @@ import logging
 
 reactions = ["👍", "👎", "❤", "🔥", "🥰", "👏", "😁", "🤔", "🤯", "😱", "🤬", "😢", "🎉", "🤩", "🤮", "💩", "🙏", "👌", "🕊", "🤡", "🥱", "🥴", "😍", "🐳", "❤‍🔥", "🌚", "🌭", "💯", "🤣", "⚡", "🍌", "🏆", "💔", "🤨", "😐", "🍓", "🍾", "💋", "🖕", "😈", "😴", "😭", "🤓", "👻", "👨‍💻", "👀", "🎃", "🙈", "😇", "😨", "🤝", "✍", "🤗", "🫡", "🎅", "🎄", "☃", "💅", "🤪", "🗿", "🆒", "💘", "🙉", "🦄", "😘", "💊", "🙊", "😎", "👾", "🤷‍♂", "🤷", "🤷‍♀", "😡"]
 
-@app.on(events.NewMessage(func = lambda e: isinstace(e.message.peer_id, PeerChannel)))
+@app.on(events.NewMessage(func = lambda e: isinstance(e.message.peer_id, PeerChannel)))
 async def react(event):
     reaction = [ReactionEmoji(emoticon=choice(reactions))]
     await event.client(SendReactionRequest(
