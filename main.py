@@ -48,7 +48,7 @@ To learn how to use me or how to set me up, click the button below for my usage 
 
 @app.on(events.CallbackQuery(pattern=r"setup"))
 async def setup(event):
-    txt = "Due to Telegram restrictions, one bot can give one reaction to your post. Below are some bots. Add these to your channel [make sure to promote them as admins but without any rights. If you don't promote them, they will still work]:\n"
+    txt = "Below are some bots. Add these to your channel [make sure to promote them as admins but without any rights. If you don't promote them, they will still work]:\n"
     for client in app.clients:
         txt += f"@{(await client.get_me()).username}\n"
     button = [[Button.inline("Back", data=b"home")]]
