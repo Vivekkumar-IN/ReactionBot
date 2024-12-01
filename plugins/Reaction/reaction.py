@@ -10,6 +10,7 @@ reactions = ["👍", "👎", "❤", "🔥", "🥰", "👏", "😁", "🤔", "�
 
 @app.on(events.NewMessage())
 async def react(event):
+    logging.info(event.stringify())
     reaction = [ReactionEmoji(emoticon=choice(reactions))]
     await event.client(SendReactionRequest(
     peer=await event.get_chat(),
