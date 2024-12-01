@@ -18,7 +18,7 @@ class You:
         for client, token in zip(self.clients, self.tokens):
             await client.start(bot_token=token)
             log.info(f"Bot {(await client.get_me()).username} started successfully.")
-        log.info("All bots started successfully.")
+        print("All bots started successfully.")
 
         tasks = [client.run_until_disconnected() for client in self.clients]
         await asyncio.gather(*tasks)
@@ -26,7 +26,7 @@ class You:
     async def disconnect(self):
         log.info("Stopping all bots...")
         await asyncio.gather(*(client.disconnect() for client in self.clients))
-        log.info("All bots stopped.")
+        print("All bots stopped.")
 
     def on(self, event: events.common.EventBuilder):
         def decorator(f):
