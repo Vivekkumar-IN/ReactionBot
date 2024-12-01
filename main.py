@@ -9,7 +9,7 @@ from telethon.tl.types import PeerChannel
 from logging.handlers import RotatingFileHandler
 from config import API_ID, API_HASH, TOKENS
 
-from .bot import app
+from bot import app
 
 
 logging.basicConfig(
