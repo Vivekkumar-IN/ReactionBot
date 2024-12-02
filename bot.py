@@ -1,8 +1,9 @@
-import importlib
 import asyncio
-from telethon import TelegramClient
-from telethon import events
-from config import API_ID, API_HASH, TOKENS
+
+from telethon import TelegramClient, events
+
+from config import API_HASH, API_ID, TOKENS
+
 
 class Bot:
     def __init__(self):
@@ -19,7 +20,7 @@ class Bot:
         for client, token in zip(self.clients, self.tokens):
             await client.start(bot_token=token)
             await self._add_available_handlers(client)
-            
+
             print(f"Bot {(await client.get_me()).username} started successfully.")
         print("All bots started successfully.")
 
@@ -39,6 +40,7 @@ class Bot:
         def decorator(f):
             self.handlers.append((f, event))
             return f
+
         return decorator
 
 

@@ -1,4 +1,4 @@
-from telethon import events, Button
+from telethon import Button, events
 
 from bot import app
 
@@ -31,4 +31,3 @@ async def setup(event):
         txt += f"@{(await client.get_me()).username}\n"
     button = [[Button.inline("Back", data=b"home")]]
     await event.edit(txt, buttons=button)
-
