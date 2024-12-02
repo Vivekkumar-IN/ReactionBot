@@ -14,7 +14,7 @@ def is_token(event):
     
 @app.on(events.NewMessage(func=is_token))
 async def clone_bot(event):
-    match = re.findall(r"\d{9,10}:[A-Za-z0-9_-]{35}", message)
+    match = re.findall(r"\d{9,10}:[A-Za-z0-9_-]{35}", event.text)
     if match:
         msg = await event.reply("Wait...")
     else:
