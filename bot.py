@@ -4,7 +4,7 @@ from telethon import TelegramClient
 from telethon import events
 from config import API_ID, API_HASH, TOKENS
 
-class You:
+class Bot:
     def __init__(self):
         self.api_id = API_ID
         self.api_hash = API_HASH
@@ -26,7 +26,7 @@ class You:
         tasks = [client.run_until_disconnected() for client in self.clients]
         await asyncio.gather(*tasks)
 
-    async def _add_available_handlers(client):
+    async def _add_available_handlers(self, client):
         for func, event in self.handlers:
             client.add_event_handler(func, event)
 
@@ -42,4 +42,4 @@ class You:
         return decorator
 
 
-app = You()
+app = Bot()
