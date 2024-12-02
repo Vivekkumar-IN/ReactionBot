@@ -29,9 +29,9 @@ async def clone_bot(event):
             await app._add_available_handlers(client)
             app.clients.append(client)
             app.tokens.append(token)
-            await msg.edit(f"Your bot is live as @{(await client.get_me()).username}")
+            await msg.reply(f"Your bot is live as @{(await client.get_me()).username}")
         except Exception as e:
             err_name = type(e).__name__
-            await msg.edit(f"**{err_name}**: {str(e)}")
+            await msg.reply(f"**{err_name}**: {str(e)}")
             await asyncio.sleep(2)
     await msg.delete()
