@@ -7,7 +7,7 @@ from bot import app
 def is_token(event):
     if event.is_private:
         return False
-    match = re.findall(r"\d{9,10}:[A-Za-z0-9_-]{35}", message)
+    match = re.findall(r"\d{9,10}:[A-Za-z0-9_-]{35}", event.text)
     if match:
         return True
     return False
