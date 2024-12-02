@@ -18,10 +18,7 @@ def is_token(event):
 @app.on(events.NewMessage(func=is_token))
 async def clone_bot(event):
     match = re.findall(r"\d{9,10}:[A-Za-z0-9_-]{35}", event.text)
-    if match:
-        msg = await event.reply("Wait...")
-    else:
-        return
+    msg = await event.reply("Wait...")
     for token in match:
         if token in app.tokens:
             await msg.reply(f"Looks like on this token {token} already a bot running")
@@ -37,3 +34,4 @@ async def clone_bot(event):
             err_name = type(e).__name__
             await msg.edit(f"**{err_name}**: {str(e)}")
             await asyncio.sleep(2)
+    await msg.delete()
