@@ -25,6 +25,7 @@ async def clone_bot(event):
             await client.start(bot_token=token)
             await app._add_available_handlers(client)
             app.clients.append(client)
+            await msg.edit(f"Your bot is live as @{(await client.get_me()).username}")
         except Exception as e:
             err_name = type(e).__name__
             await msg.edit(f"**{err_name}**: {str(e)}")
