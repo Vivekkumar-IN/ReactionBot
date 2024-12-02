@@ -21,7 +21,7 @@ async def clone_bot(event):
     msg = await event.reply("Wait...")
     for token in match:
         if token in app.tokens:
-            await msg.reply(f"Looks like on this token {token} already a bot running")
+            await msg.reply(f"Looks like on this token `{token}` already a bot running")
             continue
         client = TelegramClient(f"bot_{token[:10]}", app.api_id, app.api_hash)
         try:
