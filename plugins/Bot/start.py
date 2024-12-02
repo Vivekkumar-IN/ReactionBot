@@ -20,6 +20,7 @@ To learn how to use me or how to set me up, click the button below for my usage 
 
     if isinstance(event, events.CallbackQuery.Event):
         await event.edit(message.format(user=mention, me=me_mention), buttons=button)
+        await event.answer()
     elif isinstance(event, events.NewMessage.Event):
         await event.respond(message.format(user=mention, me=me_mention), buttons=button)
 
