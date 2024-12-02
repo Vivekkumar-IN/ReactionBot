@@ -20,11 +20,15 @@ async def clone_bot(event):
     else:
         return
     for token in match:
+        if token in app.tokens:
+            await msg.reply(f"Looks like on this token {token} already a bot running")
+            continue
         client = TelegramClient(f"bot_{token[:10]}", app.api_id, app.api_hash)
         try:
             await client.start(bot_token=token)
             await app._add_available_handlers(client)
             app.clients.append(client)
+            app.tokens.append(token)
             await msg.edit(f"Your bot is live as @{(await client.get_me()).username}")
         except Exception as e:
             err_name = type(e).__name__
