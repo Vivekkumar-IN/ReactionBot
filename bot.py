@@ -1,5 +1,5 @@
 import asyncio
-
+import os, importlib
 from telethon import TelegramClient, events
 
 from config import API_HASH, API_ID, TOKENS
@@ -42,6 +42,20 @@ class Bot:
             return f
 
         return decorator
+
+    def load_plugins():
+        plugins = {}
+        for root, _, files in os.walk("plugins"):
+            category = os.path.basename(root)
+            plugins[category] = {}
+            for file in files:
+                if file.endswith(".py") and not file.startswith("__"):
+                    module_path = (
+                        os.path.join(root, file).replace(os.sep, ".").removesuffix(".py")
+                    )
+                    module = importlib.import_module(module_path)
+                    plugins[category][file[:-3]] = module
+        return plugins
 
 
 app = Bot()
