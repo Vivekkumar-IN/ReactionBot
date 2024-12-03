@@ -33,13 +33,6 @@ if __name__ == "__main__":
         )
         sys.exit(1)
 
-    for root, _, files in os.walk("plugins"):
-        for file in files:
-            if file.endswith(".py") and not file.startswith("__"):
-                module_path = (
-                    os.path.join(root, file).replace(os.sep, ".").removesuffix(".py")
-                )
-                importlib.import_module(module_path)
-
+    app.load_plugins()
     loop = asyncio.get_event_loop()
     loop.run_until_complete(app.start())
