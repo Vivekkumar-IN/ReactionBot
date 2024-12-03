@@ -1,4 +1,3 @@
-
 import asyncio
 import logging
 import sys
@@ -20,13 +19,21 @@ logging.basicConfig(
 
 log = logging.getLogger("Bot")
 
+
 async def main():
-    if not all([API_ID, API_HASH, TOKENS]) or not isinstance(TOKENS, list) or len(TOKENS) == 0:
-        log.error("❌ Invalid configuration! Please ensure 'API_ID', 'API_HASH', and 'TOKENS' are correctly set in 'config.py'.")
+    if (
+        not all([API_ID, API_HASH, TOKENS])
+        or not isinstance(TOKENS, list)
+        or len(TOKENS) == 0
+    ):
+        log.error(
+            "❌ Invalid configuration! Please ensure 'API_ID', 'API_HASH', and 'TOKENS' are correctly set in 'config.py'."
+        )
         sys.exit(1)
 
     app.load_plugins()
     await app.start()
+
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
