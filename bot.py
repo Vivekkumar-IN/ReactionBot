@@ -1,5 +1,7 @@
 import asyncio
-import os, importlib
+import importlib
+import os
+
 from telethon import TelegramClient, events
 
 from config import API_HASH, API_ID, TOKENS
@@ -51,7 +53,9 @@ class Bot:
             for file in files:
                 if file.endswith(".py") and not file.startswith("__"):
                     module_path = (
-                        os.path.join(root, file).replace(os.sep, ".").removesuffix(".py")
+                        os.path.join(root, file)
+                        .replace(os.sep, ".")
+                        .removesuffix(".py")
                     )
                     module = importlib.import_module(module_path)
                     plugins[category][file[:-3]] = module
