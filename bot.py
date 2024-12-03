@@ -17,6 +17,7 @@ class Bot:
             for token in self.tokens
         ]
         self.handlers = []
+        self.plugins = {}
 
     async def start(self):
         for client, token in zip(self.clients, self.tokens):
@@ -46,10 +47,9 @@ class Bot:
         return decorator
 
     def load_plugins():
-        plugins = {}
         for root, _, files in os.walk("plugins"):
             category = os.path.basename(root)
-            plugins[category] = {}
+            self.plugins[category] = {}
             for file in files:
                 if file.endswith(".py") and not file.startswith("__"):
                     module_path = (
@@ -58,8 +58,8 @@ class Bot:
                         .removesuffix(".py")
                     )
                     module = importlib.import_module(module_path)
-                    plugins[category][file[:-3]] = module
-        return plugins
+                    self.plugins[category][file[:-3]] = module
+        return self.plugins
 
 
 app = Bot()
